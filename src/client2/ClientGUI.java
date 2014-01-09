@@ -39,10 +39,6 @@ public class ClientGUI extends javax.swing.JFrame{
     private void initComponents() {
 
         jToggleButton1 = new javax.swing.JToggleButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        localTree = new javax.swing.JTree();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        serverTree = new javax.swing.JTree();
         ButtonStor = new javax.swing.JButton();
         ButtonRetr = new javax.swing.JButton();
         TextFieldIP = new javax.swing.JTextField();
@@ -56,6 +52,10 @@ public class ClientGUI extends javax.swing.JFrame{
         TextFieldUser = new javax.swing.JTextField();
         labelPass = new javax.swing.JLabel();
         TextFieldPassword = new javax.swing.JPasswordField();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        clientList = new javax.swing.JList();
+        backButton = new javax.swing.JButton();
+        currentLocalDirLabel = new javax.swing.JTextField();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -66,12 +66,6 @@ public class ClientGUI extends javax.swing.JFrame{
                 formWindowClosing(evt);
             }
         });
-
-        localTree.setModel(new ClientTreeModel(currentLocalDir));
-        jScrollPane1.setViewportView(localTree);
-
-        serverTree.setModel(null);
-        jScrollPane2.setViewportView(serverTree);
 
         ButtonStor.setText(">>");
         ButtonStor.addActionListener(new java.awt.event.ActionListener() {
@@ -115,6 +109,26 @@ public class ClientGUI extends javax.swing.JFrame{
 
         labelPass.setText("Password:");
 
+        clientList.setModel(new ClientListModel(currentLocalDir));
+        clientList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        clientList.setCellRenderer(new FileRenderer(true));
+        clientList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                clientListMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(clientList);
+
+        backButton.setText("Back");
+        backButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backButtonActionPerformed(evt);
+            }
+        });
+
+        currentLocalDirLabel.setEditable(false);
+        currentLocalDirLabel.setText(currentLocalDir);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -122,45 +136,55 @@ public class ClientGUI extends javax.swing.JFrame{
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPane3))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addGap(23, 23, 23)
+                                        .addComponent(labelIP)
+                                        .addGap(3, 3, 3)
+                                        .addComponent(TextFieldIP, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(labelUser)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(TextFieldUser, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(currentLocalDirLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(28, 28, 28)
+                                .addComponent(labelPass)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(TextFieldPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(ButtonConnect))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(ButtonStor)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(9, 9, 9)
+                                        .addComponent(labelServer))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(6, 6, 6)
+                                        .addComponent(ButtonDele))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(ButtonRmd, javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(ButtonMkd)))
+                                .addGap(228, 228, 228))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(16, 16, 16)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(ButtonRetr))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(21, 21, 21)
-                                .addComponent(labelServer))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(ButtonDele))
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(ButtonRmd, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(ButtonMkd))))
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(ButtonRetr))
+                                    .addComponent(ButtonStor)))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addComponent(labelIP)
-                        .addGap(3, 3, 3)
-                        .addComponent(TextFieldIP, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(labelUser)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(TextFieldUser, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(labelPass)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(TextFieldPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(ButtonConnect)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addComponent(backButton)))
+                .addGap(210, 210, 210))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -176,7 +200,15 @@ public class ClientGUI extends javax.swing.JFrame{
                     .addComponent(TextFieldPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                        .addComponent(backButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(currentLocalDirLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(70, 70, 70))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(115, 115, 115)
                         .addComponent(ButtonStor)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ButtonRetr)
@@ -187,13 +219,8 @@ public class ClientGUI extends javax.swing.JFrame{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ButtonRmd)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ButtonMkd))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1)
-                            .addComponent(jScrollPane2))))
-                .addContainerGap(100, Short.MAX_VALUE))
+                        .addComponent(ButtonMkd)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
 
         pack();
@@ -204,39 +231,39 @@ public class ClientGUI extends javax.swing.JFrame{
     }//GEN-LAST:event_TextFieldIPActionPerformed
 
     private void ButtonStorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonStorActionPerformed
-        TreePath localPath = localTree.getSelectionPath();
-        System.out.println(localPath.toString());
-        String[] localPathArray = localPath.toString().replaceAll("[\\[\\]]", "").split(", ");
-        TreePath serverPath = serverTree.getSelectionPath();
-        System.out.println(serverPath.toString());
-        String[] serverPathArray = serverPath.toString().replaceAll("[\\[\\]]", "").split(", ");
-        if(client.isLogged()){
-            String relativeLocalDir = File.separator + "";
-            String relativeServerDir = File.separator + "";
-            for(int i=1; i < localPathArray.length-1 ; i++){
-                relativeLocalDir += localPathArray[i] + File.separator;
-            }
-            String fileName = localPathArray[localPathArray.length-1];
-            for(int i=1; i < serverPathArray.length-1 ; i++){
-                relativeServerDir += serverPathArray[i] + File.separator;
-            }
-            try {
-                String originalUserDir = System.setProperty("user.dir", currentLocalDir + relativeLocalDir);
-                client.changeDirectory(relativeServerDir);
-                client.putFile(currentLocalDir + relativeLocalDir, fileName);
-                client.changeDirectory("/");
-                // TODO: put to selected folder
-                System.setProperty("user.dir", originalUserDir);
-            } catch (IOException ex) {
-                Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (FileTransferFailedException ex) {
-                Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(null, "Błąd przesyłania pliku", "Błąd pliku", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        else{
-            
-        }
+//        TreePath localPath = localTree.getSelectionPath();
+//        System.out.println(localPath.toString());
+//        String[] localPathArray = localPath.toString().replaceAll("[\\[\\]]", "").split(", ");
+//        TreePath serverPath = serverTree.getSelectionPath();
+//        System.out.println(serverPath.toString());
+//        String[] serverPathArray = serverPath.toString().replaceAll("[\\[\\]]", "").split(", ");
+//        if(client.isLogged()){
+//            String relativeLocalDir = File.separator + "";
+//            String relativeServerDir = File.separator + "";
+//            for(int i=1; i < localPathArray.length-1 ; i++){
+//                relativeLocalDir += localPathArray[i] + File.separator;
+//            }
+//            String fileName = localPathArray[localPathArray.length-1];
+//            for(int i=1; i < serverPathArray.length-1 ; i++){
+//                relativeServerDir += serverPathArray[i] + File.separator;
+//            }
+//            try {
+//                String originalUserDir = System.setProperty("user.dir", currentLocalDir + relativeLocalDir);
+//                client.changeDirectory(relativeServerDir);
+//                client.putFile(currentLocalDir + relativeLocalDir, fileName);
+//                client.changeDirectory("/");
+//                // TODO: put to selected folder
+//                System.setProperty("user.dir", originalUserDir);
+//            } catch (IOException ex) {
+//                Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (FileTransferFailedException ex) {
+//                Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+//                JOptionPane.showMessageDialog(null, "Błąd przesyłania pliku", "Błąd pliku", JOptionPane.ERROR_MESSAGE);
+//            }
+//        }
+//        else{
+//            
+//        }
     }//GEN-LAST:event_ButtonStorActionPerformed
 
     private void ButtonConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonConnectActionPerformed
@@ -244,8 +271,8 @@ public class ClientGUI extends javax.swing.JFrame{
             client.connect(TextFieldIP.getText());
             System.out.println(TextFieldPassword.getPassword());
             client.login(TextFieldUser.getText(), TextFieldPassword.getText());
-            serverTree.setModel(new ServerTreeModel(client));
-            jScrollPane2.setViewportView(serverTree);
+//            serverTree.setModel(new ServerTreeModel(client));
+//            jScrollPane2.setViewportView(serverTree);
         } catch (UnknownHostException ex) {
             Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -254,18 +281,43 @@ public class ClientGUI extends javax.swing.JFrame{
     }//GEN-LAST:event_ButtonConnectActionPerformed
 
     private void ButtonRetrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonRetrActionPerformed
-        TreePath path = serverTree.getSelectionPath();
-        System.out.println(path.toString());
+//        TreePath path = serverTree.getSelectionPath();
+//        System.out.println(path.toString());
     }//GEN-LAST:event_ButtonRetrActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        try {
-            client.quit();
-            System.out.println(client.getResponse());
-        } catch (IOException ex) {
-            Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+        if(client.isLogged()){
+            try {
+                client.quit();
+                System.out.println(client.getResponse());
+            } catch (IOException ex) {
+                Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_formWindowClosing
+
+    private void clientListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clientListMouseClicked
+        if (evt.getClickCount() == 2 && !evt.isConsumed()) {
+            evt.consume();
+            if(clientList.getSelectedValue() != null){
+                if(((File) clientList.getSelectedValue()).isDirectory()){
+                    currentLocalDir = currentLocalDir + File.separator + ((File) clientList.getSelectedValue()).getName();
+                    System.out.println(currentLocalDir);
+                    currentLocalDirLabel.setText(currentLocalDir);
+                    clientList.setModel(new ClientListModel(currentLocalDir));
+                }
+            }
+       }
+    }//GEN-LAST:event_clientListMouseClicked
+
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+        if(!currentLocalDir.substring(0, currentLocalDir.lastIndexOf(File.separator)).isEmpty()){
+            currentLocalDir = currentLocalDir.substring(0, currentLocalDir.lastIndexOf(File.separator));
+            System.out.println(currentLocalDir);
+            currentLocalDirLabel.setText(currentLocalDir);
+            clientList.setModel(new ClientListModel(currentLocalDir));
+        }
+    }//GEN-LAST:event_backButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -276,22 +328,22 @@ public class ClientGUI extends javax.swing.JFrame{
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(ClientGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
         //</editor-fold>
 
         /* Create and display the form */
@@ -312,14 +364,14 @@ public class ClientGUI extends javax.swing.JFrame{
     private javax.swing.JTextField TextFieldIP;
     private javax.swing.JPasswordField TextFieldPassword;
     private javax.swing.JTextField TextFieldUser;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton backButton;
+    private javax.swing.JList clientList;
+    private javax.swing.JTextField currentLocalDirLabel;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JLabel labelIP;
     private javax.swing.JLabel labelPass;
     private javax.swing.JLabel labelServer;
     private javax.swing.JLabel labelUser;
-    private javax.swing.JTree localTree;
-    private javax.swing.JTree serverTree;
     // End of variables declaration//GEN-END:variables
 }

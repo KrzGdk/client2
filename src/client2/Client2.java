@@ -311,10 +311,6 @@ public class Client2{
             Client2 cli = new Client2();
             cli.connect("127.0.0.1");
             cli.login("ftp", "ftp");
-            System.out.println(cli.changeDirectory("aa"));
-            System.out.println(cli.currentDirectory());
-            System.out.println(cli.listToString());
-            cli.quit();
         } catch (UnknownHostException ex) {
             Logger.getLogger(Client2.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
