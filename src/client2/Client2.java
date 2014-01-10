@@ -7,7 +7,6 @@ package client2;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,6 +39,7 @@ public class Client2{
      * Method that connects to the FTP server, initializes command channels
      * and reads welcome messages
      *
+     * @param IP IP of the host
      * @throws UnknownHostException
      * @throws IOException
      */
@@ -101,8 +101,7 @@ public class Client2{
                 }
             }
             setResponse(fromServer.readLine()); // transfer complete
-            if(getResponse().startsWith("226")) return true;
-            else return false;
+            return getResponse().startsWith("226");
         }
         else return false;
     }
@@ -113,6 +112,7 @@ public class Client2{
      * @param filename name of local file
      * @return true on success, false on failure
      * @throws IOException
+     * @throws client2.FileTransferFailedException
      */
     public boolean putFile(String path, String filename) throws IOException, FileTransferFailedException{
         if(!initializePassiveMode()) return false;
@@ -157,8 +157,7 @@ public class Client2{
                 }
             }
             setResponse(fromServer.readLine()); // transfer complete
-            if(getResponse().startsWith("226")) return true;
-            else return false;
+            return getResponse().startsWith("226");
         }
         else return false;
     }
@@ -172,8 +171,7 @@ public class Client2{
     public boolean deleteFile(String filename) throws IOException{
         toServer.println("DELE " + filename);
         setResponse(fromServer.readLine());
-        if(getResponse().startsWith("250")) return true;
-        else return false;
+        return getResponse().startsWith("250");
     }
     /**
      * Creates a directory on the server
@@ -185,8 +183,7 @@ public class Client2{
     public boolean makeDirectory(String name) throws IOException{
         toServer.println("MKD " + name);
         setResponse(fromServer.readLine());
-        if(getResponse().startsWith("257")) return true;
-        else return false;
+        return getResponse().startsWith("257");
     }
     /**
      * Removes the directory on the server
@@ -198,8 +195,7 @@ public class Client2{
     public boolean removeDirectory(String name) throws IOException{
         toServer.println("RMD " + name);
         setResponse(fromServer.readLine());
-        if(getResponse().startsWith("250")) return true;
-        else return false;
+        return getResponse().startsWith("250");
     }
     /**
      * Changes the current working directory on server
@@ -211,8 +207,7 @@ public class Client2{
     public boolean changeDirectory(String name) throws IOException{
         toServer.println("CWD " + name);
         setResponse(fromServer.readLine());
-        if(getResponse().startsWith("250")) return true;
-        else return false;
+        return getResponse().startsWith("250");
     }
     /**
      * Sends a FTP comand to get the name of the current directory
@@ -246,8 +241,7 @@ public class Client2{
                 }
             }
             setResponse(fromServer.readLine()); // transfer complete
-            if(getResponse().startsWith("226")) return true;
-            else return false;
+            return getResponse().startsWith("226");
         }
         else return false;
     }
@@ -263,7 +257,7 @@ public class Client2{
         toServer.println("LIST");
         setResponse(fromServer.readLine());
         if(getResponse().startsWith("150")){ // file found
-            try (DataInputStream dataIn = new DataInputStream(passiveSocket.getInputStream())) {
+            try (BufferedReader dataIn = new BufferedReader(new InputStreamReader(passiveSocket.getInputStream()))) {
 
                 String tmp; 
                 while ((tmp = dataIn.readLine()) != null) {
@@ -307,14 +301,15 @@ public class Client2{
         return logged;
     }
     public static void main(String[] args){
+        Logger.getLogger(Client2.class.getName()).setLevel(Level.WARNING);
         try {
             Client2 cli = new Client2();
-            cli.connect("127.0.0.1");
+            cli.connect("127.123.432.1");
             cli.login("ftp", "ftp");
         } catch (UnknownHostException ex) {
-            Logger.getLogger(Client2.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client2.class.getName()).log(Level.WARNING, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(Client2.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Client2.class.getName()).log(Level.INFO, null, ex);
         }
     }
     
