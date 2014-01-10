@@ -301,15 +301,18 @@ public class Client2{
         return logged;
     }
     public static void main(String[] args){
-        Logger.getLogger(Client2.class.getName()).setLevel(Level.WARNING);
+        Logger.getLogger(Client2.class.getName()).setLevel(Level.INFO);
         try {
             Client2 cli = new Client2();
+            Logger.getLogger(Client2.class.getName()).log(Level.INFO, "konstruktor");
             cli.connect("127.123.432.1");
+            Logger.getLogger(Client2.class.getName()).log(Level.INFO, "logowanie");
             cli.login("ftp", "ftp");
+            Logger.getLogger(Client2.class.getName()).log(Level.INFO, "zalogowany");
         } catch (UnknownHostException ex) {
-            Logger.getLogger(Client2.class.getName()).log(Level.WARNING, null, ex);
+            Logger.getLogger(Client2.class.getName()).log(Level.WARNING, "wyjatek", ex);
         } catch (IOException ex) {
-            Logger.getLogger(Client2.class.getName()).log(Level.INFO, null, ex);
+            Logger.getLogger(Client2.class.getName()).log(Level.WARNING, "wyjatek", ex);
         }
     }
     
