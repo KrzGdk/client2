@@ -11,8 +11,8 @@ import javax.swing.filechooser.FileSystemView;
 
 class FileRenderer extends DefaultListCellRenderer {
 
-    private boolean pad;
-    private Border padBorder = new EmptyBorder(3,3,3,3);
+    private final boolean pad;
+    private final Border padBorder = new EmptyBorder(3,3,3,3);
 
     FileRenderer(boolean pad) {
         this.pad = pad;

@@ -7,6 +7,7 @@ package client2;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,8 +17,7 @@ import java.io.RandomAccessFile;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.JTextArea;
 
 /**
  * Class for handling FTP connection providing basic operations
@@ -34,7 +34,13 @@ public class Client2{
     protected String passiveModeIP;
     protected boolean logged = false, passiveMode = false;
     protected String command, response;
+    protected JTextArea textOut = null;
    
+    
+    public Client2(JTextArea textArea){
+        textOut = textArea;
+    }
+    
     /**
      * Method that connects to the FTP server, initializes command channels
      * and reads welcome messages
@@ -52,10 +58,10 @@ public class Client2{
         //reading welcome messages
         setResponse(fromServer.readLine());
         while(getResponse().charAt(3) == '-'){
-            System.out.println(getResponse());
+            textOut.append(getResponse() + "\n");
             setResponse(fromServer.readLine());
         }
-        System.out.println(getResponse());
+        textOut.append(getResponse() + "\n");
     }
     /**
      * Method that sends FTP commands to login the user
@@ -67,12 +73,16 @@ public class Client2{
      */
     public boolean login(String username, String password) throws IOException{
         toServer.println("USER " + username);
+        textOut.append("USER " + username + "\n");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
         if(!response.startsWith("331")){
             return false;
         }
         toServer.println("PASS " + password);
+        textOut.append("PASS " + "***" + "\n");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
         if(getResponse().startsWith("230")){
             logged = true;
             return true;
@@ -110,16 +120,19 @@ public class Client2{
      *
      * @param path path to the file on the local disk, must contain directory separator
      * @param filename name of local file
+     * @param serverPath path to save the file on server
      * @return true on success, false on failure
      * @throws IOException
      * @throws client2.FileTransferFailedException
      */
-    public boolean putFile(String path, String filename) throws IOException, FileTransferFailedException{
+    public boolean putFile(String path, String filename, String serverPath) throws IOException, FileTransferFailedException{
         if(!initializePassiveMode()) return false;
-        toServer.println("STOR " + filename);
+        toServer.println("STOR " + serverPath + filename);
+        textOut.append("STOR " + serverPath + filename + "\n");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
         if(getResponse().startsWith("150")){ 
-            try (FileInputStream fileIn = new FileInputStream(path + filename); 
+            try (FileInputStream fileIn = new FileInputStream(path + File.separator + filename); 
                     DataOutputStream dataOut = new DataOutputStream(passiveSocket.getOutputStream())) {
                 
                 int offset;
@@ -129,6 +142,7 @@ public class Client2{
                 }
             }
             setResponse(fromServer.readLine()); // transfer complete
+            textOut.append(getResponse() + "\n");
             if(getResponse().startsWith("226")) return true;
             else throw new FileTransferFailedException();
         }
@@ -253,27 +267,29 @@ public class Client2{
      */
     public String listToString() throws IOException{
         if(!initializePassiveMode()) return null;
-        StringBuilder str = new StringBuilder();
+        String list;
         toServer.println("LIST");
+        textOut.append("LIST\n");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
         if(getResponse().startsWith("150")){ // file found
-            try (BufferedReader dataIn = new BufferedReader(new InputStreamReader(passiveSocket.getInputStream()))) {
+            try (DataInputStream dataIn = new DataInputStream(passiveSocket.getInputStream())) {
 
-                String tmp; 
-                while ((tmp = dataIn.readLine()) != null) {
-                    str.append(tmp);
-                    str.append("\r\n");
-                }
+                list = dataIn.readUTF(); 
+                
             }
             setResponse(fromServer.readLine()); // transfer complete
+            textOut.append(getResponse() + "\n");
             passiveSocket.close();
             if(getResponse().startsWith("226")){
-                return str.substring(0, str.length()-2);
+                System.out.println(list);
+                return list;
             }
             else return null;
         }
         return null;
     }
+    
     /**
      * Sends a QUIT command
      *
@@ -300,21 +316,6 @@ public class Client2{
     public boolean isLogged(){
         return logged;
     }
-    public static void main(String[] args){
-        Logger.getLogger(Client2.class.getName()).setLevel(Level.INFO);
-        try {
-            Client2 cli = new Client2();
-            Logger.getLogger(Client2.class.getName()).log(Level.INFO, "konstruktor");
-            cli.connect("127.123.432.1");
-            Logger.getLogger(Client2.class.getName()).log(Level.INFO, "logowanie");
-            cli.login("ftp", "ftp");
-            Logger.getLogger(Client2.class.getName()).log(Level.INFO, "zalogowany");
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(Client2.class.getName()).log(Level.WARNING, "wyjatek", ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Client2.class.getName()).log(Level.WARNING, "wyjatek", ex);
-        }
-    }
     
     /**
      * Method that sends a PASV command and opens a socket to handle the connection
@@ -324,7 +325,9 @@ public class Client2{
      */
     private boolean initializePassiveMode() throws IOException{
         toServer.println("PASV");
+        textOut.append("PASV\n");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
         if(getResponse().startsWith("227")){
             int firstBraceIndex = getResponse().indexOf("(");
             String address = getResponse().substring(firstBraceIndex+1,getResponse().length()-1);
@@ -358,4 +361,6 @@ public class Client2{
     public void setResponse(String response){
         this.response = response;
     }
+    
+    
 }

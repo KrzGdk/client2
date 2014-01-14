@@ -10,7 +10,6 @@ import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.tree.TreePath;
 
 /**
  *
@@ -18,15 +17,16 @@ import javax.swing.tree.TreePath;
  */
 public class ClientGUI extends javax.swing.JFrame{
     private String currentLocalDir;
+    private String currentServerDir;
     private Client2 client;
     /**
      * Creates new form ClientGUI
      */
     public ClientGUI(){
-        this.client = new Client2();
-        
         this.currentLocalDir = System.getProperty("user.dir");
+        this.currentServerDir = "/";
         initComponents();
+        this.client = new Client2(commandsArea);
     }
 
     /**
@@ -56,6 +56,8 @@ public class ClientGUI extends javax.swing.JFrame{
         clientList = new javax.swing.JList();
         backButton = new javax.swing.JButton();
         currentLocalDirLabel = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        commandsArea = new javax.swing.JTextArea();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -129,40 +131,29 @@ public class ClientGUI extends javax.swing.JFrame{
         currentLocalDirLabel.setEditable(false);
         currentLocalDirLabel.setText(currentLocalDir);
 
+        commandsArea.setEditable(false);
+        commandsArea.setColumns(20);
+        commandsArea.setRows(5);
+        jScrollPane1.setViewportView(commandsArea);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(currentLocalDirLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jScrollPane3))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(28, 28, 28)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addGap(23, 23, 23)
-                                        .addComponent(labelIP)
-                                        .addGap(3, 3, 3)
-                                        .addComponent(TextFieldIP, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(labelUser)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(TextFieldUser, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addContainerGap()
-                                        .addComponent(currentLocalDirLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(ButtonRetr)
+                                    .addComponent(ButtonStor)))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(labelPass)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(TextFieldPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(ButtonConnect))
-                            .addGroup(layout.createSequentialGroup()
+                                .addGap(3, 3, 3)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(9, 9, 9)
@@ -172,19 +163,30 @@ public class ClientGUI extends javax.swing.JFrame{
                                         .addComponent(ButtonDele))
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(ButtonRmd, javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(ButtonMkd)))
-                                .addGap(228, 228, 228))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(16, 16, 16)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(ButtonRetr))
-                                    .addComponent(ButtonStor)))))
+                                        .addComponent(ButtonMkd))))))
+                    .addComponent(backButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(backButton)))
-                .addGap(210, 210, 210))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 744, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(21, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(labelIP)
+                        .addGap(3, 3, 3)
+                        .addComponent(TextFieldIP, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelUser)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(TextFieldUser, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(labelPass)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(TextFieldPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(ButtonConnect)
+                        .addGap(210, 210, 210))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,29 +200,28 @@ public class ClientGUI extends javax.swing.JFrame{
                     .addComponent(TextFieldUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(labelPass)
                     .addComponent(TextFieldPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(backButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(currentLocalDirLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-                        .addComponent(backButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(currentLocalDirLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(70, 70, 70))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(115, 115, 115)
-                        .addComponent(ButtonStor)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ButtonRetr)
-                        .addGap(19, 19, 19)
+                        .addGap(5, 5, 5)
+                        .addComponent(ButtonStor)
+                        .addGap(18, 18, 18)
                         .addComponent(labelServer)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ButtonDele)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ButtonRmd)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ButtonMkd)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(ButtonMkd)))
+                .addGap(55, 55, 55))
         );
 
         pack();
@@ -231,6 +232,10 @@ public class ClientGUI extends javax.swing.JFrame{
     }//GEN-LAST:event_TextFieldIPActionPerformed
 
     private void ButtonStorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonStorActionPerformed
+        System.out.println(currentLocalDir);
+        String file = clientList.getSelectedValue().toString();
+        //try {
+            //client.putFile(currentLocalDir, file, currentServerDir);
 //        TreePath localPath = localTree.getSelectionPath();
 //        System.out.println(localPath.toString());
 //        String[] localPathArray = localPath.toString().replaceAll("[\\[\\]]", "").split(", ");
@@ -264,6 +269,11 @@ public class ClientGUI extends javax.swing.JFrame{
 //        else{
 //            
 //        }
+//        } catch (IOException ex) {
+//            Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+//        } catch (FileTransferFailedException ex) {
+//            Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }//GEN-LAST:event_ButtonStorActionPerformed
 
     private void ButtonConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonConnectActionPerformed
@@ -271,8 +281,7 @@ public class ClientGUI extends javax.swing.JFrame{
             client.connect(TextFieldIP.getText());
             System.out.println(TextFieldPassword.getPassword());
             client.login(TextFieldUser.getText(), TextFieldPassword.getText());
-//            serverTree.setModel(new ServerTreeModel(client));
-//            jScrollPane2.setViewportView(serverTree);
+            client.listToString();
         } catch (UnknownHostException ex) {
             Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -366,7 +375,9 @@ public class ClientGUI extends javax.swing.JFrame{
     private javax.swing.JTextField TextFieldUser;
     private javax.swing.JButton backButton;
     private javax.swing.JList clientList;
+    private javax.swing.JTextArea commandsArea;
     private javax.swing.JTextField currentLocalDirLabel;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JLabel labelIP;
