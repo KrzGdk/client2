@@ -151,17 +151,20 @@ public class Client2{
     /**
      * Method that sends the append command to FTP server
      *
-     * @param filename file to append data
+     * @param path path to the file on the local disk, must contain directory separator
+     * @param filename name of local file
+     * @param serverPath path to save the file on server
      * @return true on success, false on failure
      * @throws IOException
      */
-    public boolean appendFile(String filename) throws IOException{
+    public boolean appendFile(String path, String filename, String serverPath) throws IOException{
         if(!initializePassiveMode()) return false;
-        
         toServer.println("APPE " + filename);
+        textOut.append("APPE " + serverPath + filename + "\n");
         setResponse(fromServer.readLine());
-        if(getResponse().startsWith("150")){
-            try (FileInputStream fileIn = new FileInputStream(filename); 
+        textOut.append(getResponse() + "\n");
+        if(getResponse().startsWith("150")){ 
+            try (FileInputStream fileIn = new FileInputStream(path + File.separator + filename); 
                     DataOutputStream dataOut = new DataOutputStream(passiveSocket.getOutputStream())) {
                 
                 int offset;
@@ -171,6 +174,7 @@ public class Client2{
                 }
             }
             setResponse(fromServer.readLine()); // transfer complete
+            textOut.append(getResponse() + "\n");
             return getResponse().startsWith("226");
         }
         else return false;
@@ -184,7 +188,9 @@ public class Client2{
      */
     public boolean deleteFile(String filename) throws IOException{
         toServer.println("DELE " + filename);
+        textOut.append("MKD " + filename + "\n");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
         return getResponse().startsWith("250");
     }
     /**
@@ -196,7 +202,9 @@ public class Client2{
      */
     public boolean makeDirectory(String name) throws IOException{
         toServer.println("MKD " + name);
+        textOut.append("MKD " + name + "\n");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
         return getResponse().startsWith("257");
     }
     /**
@@ -208,7 +216,9 @@ public class Client2{
      */
     public boolean removeDirectory(String name) throws IOException{
         toServer.println("RMD " + name);
+        textOut.append("RMD " + name + "\n");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
         return getResponse().startsWith("250");
     }
     /**
@@ -220,7 +230,9 @@ public class Client2{
      */
     public boolean changeDirectory(String name) throws IOException{
         toServer.println("CWD " + name);
+        textOut.append("CWD " + name + "\n");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
         return getResponse().startsWith("250");
     }
     /**
@@ -231,7 +243,9 @@ public class Client2{
      */
     public String currentDirectory() throws IOException{
         toServer.println("PWD");
+        textOut.append("PWD\n");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
         return getResponse();
     }
     /**
@@ -282,7 +296,6 @@ public class Client2{
             textOut.append(getResponse() + "\n");
             passiveSocket.close();
             if(getResponse().startsWith("226")){
-                System.out.println(list);
                 return list;
             }
             else return null;
@@ -296,8 +309,10 @@ public class Client2{
      * @throws IOException
      */
     public void quit() throws IOException{
+        textOut.append("QUIT\n");
         toServer.println("QUIT");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
     }
     /**
      * Sends a NOOP command
@@ -305,8 +320,10 @@ public class Client2{
      * @throws IOException
      */
     public void noop() throws IOException{
+        textOut.append("NOOP\n");
         toServer.println("NOOP");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
     }
     /**
      * Returns the status of client login
@@ -361,6 +378,4 @@ public class Client2{
     public void setResponse(String response){
         this.response = response;
     }
-    
-    
 }

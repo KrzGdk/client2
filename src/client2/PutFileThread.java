@@ -14,13 +14,19 @@ import java.net.Socket;
  *
  * @author root
  */
-public class GetFileThread extends Thread {
+public class PutFileThread extends Thread {
     protected Socket passiveSocket = null;
+    protected String path;
     protected String filename;
-    protected RandomAccessFile file;
-    protected DataInputStream dataIn;
     
-    public GetFileThread(){
+    public PutFileThread(Socket passSock, String path, String name){
+        passiveSocket = passSock;
+        this.path = path;
+        filename = name;
+    }
+    
+    @Override
+    public void run(){
         
     }
 }
