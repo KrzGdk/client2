@@ -71,35 +71,40 @@
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Group type="102" alignment="1" attributes="0">
                                                   <EmptySpace max="-2" attributes="0"/>
-                                                  <Group type="103" groupAlignment="1" attributes="0">
-                                                      <Component id="ButtonRetr" min="-2" max="-2" attributes="0"/>
-                                                      <Component id="ButtonStor" min="-2" max="-2" attributes="0"/>
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Group type="102" alignment="1" attributes="0">
+                                                          <Group type="103" groupAlignment="1" attributes="0">
+                                                              <Component id="ButtonRetr" min="-2" max="-2" attributes="0"/>
+                                                              <Component id="ButtonStor" min="-2" max="-2" attributes="0"/>
+                                                          </Group>
+                                                          <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <Group type="102" alignment="1" attributes="0">
+                                                          <Group type="103" groupAlignment="0" attributes="0">
+                                                              <Group type="102" alignment="0" attributes="0">
+                                                                  <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                                                  <Component id="ButtonRmd" min="-2" max="-2" attributes="0"/>
+                                                              </Group>
+                                                              <Component id="ButtonMkd" alignment="0" min="-2" max="-2" attributes="0"/>
+                                                              <Group type="102" alignment="0" attributes="0">
+                                                                  <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                                                                  <Group type="103" groupAlignment="1" attributes="0">
+                                                                      <Component id="ButtonDele" min="-2" max="-2" attributes="0"/>
+                                                                      <Component id="labelServer" alignment="1" min="-2" max="-2" attributes="0"/>
+                                                                  </Group>
+                                                              </Group>
+                                                          </Group>
+                                                          <EmptySpace max="-2" attributes="0"/>
+                                                      </Group>
                                                   </Group>
-                                                  <EmptySpace min="-2" pref="54" max="-2" attributes="0"/>
                                               </Group>
                                               <Group type="102" attributes="0">
+                                                  <EmptySpace min="44" pref="44" max="-2" attributes="0"/>
                                                   <Group type="103" groupAlignment="0" attributes="0">
-                                                      <Group type="102" alignment="0" attributes="0">
-                                                          <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
-                                                          <Component id="ButtonRmd" min="-2" max="-2" attributes="0"/>
-                                                      </Group>
-                                                      <Group type="102" alignment="0" attributes="0">
-                                                          <EmptySpace max="-2" attributes="0"/>
-                                                          <Component id="ButtonMkd" min="-2" max="-2" attributes="0"/>
-                                                      </Group>
-                                                      <Group type="102" alignment="0" attributes="0">
-                                                          <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                                                          <Group type="103" groupAlignment="1" attributes="0">
-                                                              <Component id="labelServer" min="-2" max="-2" attributes="0"/>
-                                                              <Component id="ButtonDele" min="-2" max="-2" attributes="0"/>
-                                                          </Group>
-                                                      </Group>
-                                                      <Group type="102" alignment="0" attributes="0">
-                                                          <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
-                                                          <Component id="abortButton" min="-2" max="-2" attributes="0"/>
-                                                      </Group>
+                                                      <Component id="abortButton" min="-2" max="-2" attributes="0"/>
+                                                      <Component id="ButtonAppe" alignment="0" min="-2" max="-2" attributes="0"/>
                                                   </Group>
-                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
                                               </Group>
                                           </Group>
                                       </Group>
@@ -162,7 +167,9 @@
                       <Component id="ButtonRetr" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="ButtonStor" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="ButtonAppe" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="labelServer" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="ButtonDele" min="-2" max="-2" attributes="0"/>
@@ -185,6 +192,7 @@
     <Component class="javax.swing.JButton" name="ButtonStor">
       <Properties>
         <Property name="text" type="java.lang.String" value="&gt;&gt;"/>
+        <Property name="toolTipText" type="java.lang.String" value="Upload file"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButtonStorActionPerformed"/>
@@ -193,6 +201,7 @@
     <Component class="javax.swing.JButton" name="ButtonRetr">
       <Properties>
         <Property name="text" type="java.lang.String" value="&lt;&lt;"/>
+        <Property name="toolTipText" type="java.lang.String" value="Download file"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButtonRetrActionPerformed"/>
@@ -202,9 +211,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="127.0.0.1"/>
       </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="TextFieldIPActionPerformed"/>
-      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="labelIP">
       <Properties>
@@ -228,6 +234,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Delete File"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButtonDeleActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="ButtonRmd">
       <Properties>
@@ -374,6 +383,12 @@
       </Events>
     </Component>
     <Component class="javax.swing.JProgressBar" name="progressBar">
+    </Component>
+    <Component class="javax.swing.JButton" name="ButtonAppe">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&gt;&gt;&gt;&gt;"/>
+        <Property name="toolTipText" type="java.lang.String" value="Append file"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

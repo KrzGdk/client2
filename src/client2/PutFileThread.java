@@ -51,7 +51,6 @@ public class PutFileThread extends Thread {
             int offset, percent;
             long i = 1;
             byte[] data = new byte[1024];
-            textOut.append("sending...\n");
             while( (offset = fileIn.read(data)) != -1){
                 dataOut.write(data, 0, offset);
                 percent = (int) ((i*1024*100)/size);

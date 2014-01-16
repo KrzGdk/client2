@@ -33,7 +33,7 @@ public class Client2{
     protected int clientPort;
     protected int passiveModePort;
     protected String passiveModeIP;
-    protected boolean logged = false, passiveMode = false;
+    protected boolean logged = false, passiveMode = false, connected = false;
     protected String command, response;
     protected JTextArea textOut = null;
     protected Thread transferThread = null;
@@ -65,6 +65,7 @@ public class Client2{
             setResponse(fromServer.readLine());
         }
         textOut.append(getResponse() + "\n");
+        connected = true;
     }
     /**
      * Method that sends FTP commands to login the user
@@ -90,6 +91,10 @@ public class Client2{
             logged = true;
             return true;
         }
+        else if(getResponse().startsWith("221")){
+            connected = false;
+            return false;
+        }
         else return false;
     }
     /**
@@ -114,6 +119,10 @@ public class Client2{
                 }
             }
             setResponse(fromServer.readLine()); // transfer complete
+            if(getResponse().startsWith("221")){
+                connected = false;
+                return false;
+            }
             return getResponse().startsWith("226");
         }
         else return false;
@@ -135,6 +144,9 @@ public class Client2{
         if(getResponse().startsWith("150")){ 
             transferThread = new PutFileThread(passiveSocket, path, filename, fromServer, textOut, progressBar);
             transferThread.start();
+        }
+        else if(getResponse().startsWith("221")){
+            connected = false;
         }
     }
     
@@ -172,6 +184,10 @@ public class Client2{
             }
             setResponse(fromServer.readLine()); // transfer complete
             textOut.append(getResponse() + "\n");
+            if(getResponse().startsWith("221")){
+                connected = false;
+                return false;
+            }
             return getResponse().startsWith("226");
         }
         else return false;
@@ -185,9 +201,13 @@ public class Client2{
      */
     public boolean deleteFile(String filename) throws IOException{
         toServer.println("DELE " + filename);
-        textOut.append("MKD " + filename + "\n");
+        textOut.append("DELE " + filename + "\n");
         setResponse(fromServer.readLine());
         textOut.append(getResponse() + "\n");
+        if(getResponse().startsWith("221")){
+            connected = false;
+            return false;
+        }
         return getResponse().startsWith("250");
     }
     /**
@@ -202,6 +222,10 @@ public class Client2{
         textOut.append("MKD " + name + "\n");
         setResponse(fromServer.readLine());
         textOut.append(getResponse() + "\n");
+        if(getResponse().startsWith("221")){
+            connected = false;
+            return false;
+        }
         return getResponse().startsWith("257");
     }
     /**
@@ -216,6 +240,10 @@ public class Client2{
         textOut.append("RMD " + name + "\n");
         setResponse(fromServer.readLine());
         textOut.append(getResponse() + "\n");
+        if(getResponse().startsWith("221")){
+            connected = false;
+            return false;
+        }
         return getResponse().startsWith("250");
     }
     /**
@@ -230,6 +258,10 @@ public class Client2{
         textOut.append("CWD " + name + "\n");
         setResponse(fromServer.readLine());
         textOut.append(getResponse() + "\n");
+        if(getResponse().startsWith("221")){
+            connected = false;
+            return false;
+        }
         return getResponse().startsWith("250");
     }
     /**
@@ -243,6 +275,10 @@ public class Client2{
         textOut.append("PWD\n");
         setResponse(fromServer.readLine());
         textOut.append(getResponse() + "\n");
+        if(getResponse().startsWith("221")){
+            connected = false;
+            return null;
+        }
         return getResponse();
     }
     /**
@@ -295,6 +331,10 @@ public class Client2{
             if(getResponse().startsWith("226")){
                 return list;
             }
+            else if(getResponse().startsWith("221")){
+                connected = false;
+                return null;
+            }
             else return null;
         }
         return null;
@@ -310,6 +350,7 @@ public class Client2{
         toServer.println("QUIT");
         setResponse(fromServer.readLine());
         textOut.append(getResponse() + "\n");
+        connected = false;
     }
     /**
      * Sends a NOOP command
@@ -329,6 +370,15 @@ public class Client2{
      */
     public boolean isLogged(){
         return logged;
+    }
+    
+    /**
+     * Returns the status of client connection
+     *
+     * @return true if logged in, false otherwise
+     */
+    public boolean isConnected(){
+        return connected;
     }
     
     /**

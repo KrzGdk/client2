@@ -10,7 +10,7 @@ package client2;
  */
 public class ServerFile{
     private boolean dir = false;
-    private String name;
+    private final String name;
     
     public ServerFile(String name, boolean dir){
         this.dir = dir;
