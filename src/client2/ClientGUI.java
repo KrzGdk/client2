@@ -4,13 +4,13 @@
  */
 package client2;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.StringStack;
 import java.io.File;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.showMessageDialog;
 import javax.swing.JRootPane;
 
 /**
@@ -28,7 +28,7 @@ public class ClientGUI extends javax.swing.JFrame{
         this.currentLocalDir = System.getProperty("user.dir");
         this.currentServerDir = "/";
         initComponents();
-        this.client = new Client2(commandsArea);
+        this.client = new Client2(commandsArea, progressBar);
     }
 
     /**
@@ -66,6 +66,8 @@ public class ClientGUI extends javax.swing.JFrame{
         serverBackButton = new javax.swing.JButton();
         ButtonDisconnect = new javax.swing.JButton();
         serverRefreshButton = new javax.swing.JButton();
+        abortButton = new javax.swing.JButton();
+        progressBar = new javax.swing.JProgressBar();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -191,6 +193,13 @@ public class ClientGUI extends javax.swing.JFrame{
             }
         });
 
+        abortButton.setText("Abort");
+        abortButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                abortButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -217,45 +226,50 @@ public class ClientGUI extends javax.swing.JFrame{
                         .addComponent(ButtonDisconnect)
                         .addGap(40, 40, 40))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 755, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
-                                            .addComponent(currentLocalDirLabel))
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addGap(7, 7, 7)
-                                                        .addComponent(ButtonRmd))
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addComponent(ButtonMkd))
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addGap(27, 27, 27)
-                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                            .addComponent(labelServer)
-                                                            .addComponent(ButtonDele))))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                    .addComponent(ButtonRetr)
-                                                    .addComponent(ButtonStor))
-                                                .addGap(54, 54, 54))))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(backButton)
-                                        .addGap(395, 395, 395)))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(serverBackButton)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(serverRefreshButton))
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(currentServerDirLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 755, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                                                .addComponent(currentLocalDirLabel))
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addComponent(ButtonRetr)
+                                                        .addComponent(ButtonStor))
+                                                    .addGap(54, 54, 54))
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                            .addGap(7, 7, 7)
+                                                            .addComponent(ButtonRmd))
+                                                        .addGroup(layout.createSequentialGroup()
+                                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                            .addComponent(ButtonMkd))
+                                                        .addGroup(layout.createSequentialGroup()
+                                                            .addGap(27, 27, 27)
+                                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                                .addComponent(labelServer)
+                                                                .addComponent(ButtonDele)))
+                                                        .addGroup(layout.createSequentialGroup()
+                                                            .addGap(44, 44, 44)
+                                                            .addComponent(abortButton)))
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))))
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(backButton)
+                                            .addGap(395, 395, 395)))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(serverBackButton)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(serverRefreshButton))
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(currentServerDirLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 299, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                         .addContainerGap(18, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -298,8 +312,12 @@ public class ClientGUI extends javax.swing.JFrame{
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ButtonRmd)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ButtonMkd)))
-                .addGap(55, 55, 55))
+                        .addComponent(ButtonMkd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(abortButton)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27))
         );
 
         pack();
@@ -312,10 +330,13 @@ public class ClientGUI extends javax.swing.JFrame{
     private void ButtonStorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonStorActionPerformed
         System.out.println(currentLocalDir);
         String file = clientList.getSelectedValue().toString();
+        if(new File(currentLocalDir + File.separator + file).isDirectory()){
+            showMessageDialog(null, "Sending directories not supported");
+            return;
+        }
         try {
             client.putFile(currentLocalDir, file, currentServerDir);
-            serverList.setModel(new ServerListModel(currentServerDir,client));
-        } catch (IOException | FileTransferFailedException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_ButtonStorActionPerformed
@@ -366,8 +387,14 @@ public class ClientGUI extends javax.swing.JFrame{
     }//GEN-LAST:event_clientListMouseClicked
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-        if(!currentLocalDir.substring(0, currentLocalDir.lastIndexOf(File.separator)).isEmpty()){
+        if(currentLocalDir.lastIndexOf(File.separator) != 0){
             currentLocalDir = currentLocalDir.substring(0, currentLocalDir.lastIndexOf(File.separator));
+            System.out.println(currentLocalDir);
+            currentLocalDirLabel.setText(currentLocalDir);
+            clientList.setModel(new ClientListModel(currentLocalDir));
+        }
+        else{
+            currentLocalDir = "/";
             System.out.println(currentLocalDir);
             currentLocalDirLabel.setText(currentLocalDir);
             clientList.setModel(new ClientListModel(currentLocalDir));
@@ -450,6 +477,15 @@ public class ClientGUI extends javax.swing.JFrame{
         }
     }//GEN-LAST:event_ButtonMkdActionPerformed
 
+    private void abortButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abortButtonActionPerformed
+        try {
+            client.abortTransfer();
+            progressBar.setValue(0);
+        } catch (IOException ex) {
+            Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_abortButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -496,6 +532,7 @@ public class ClientGUI extends javax.swing.JFrame{
     private javax.swing.JTextField TextFieldIP;
     private javax.swing.JPasswordField TextFieldPassword;
     private javax.swing.JTextField TextFieldUser;
+    private javax.swing.JButton abortButton;
     private javax.swing.JButton backButton;
     private javax.swing.JList clientList;
     private javax.swing.JTextArea commandsArea;
@@ -509,6 +546,7 @@ public class ClientGUI extends javax.swing.JFrame{
     private javax.swing.JLabel labelPass;
     private javax.swing.JLabel labelServer;
     private javax.swing.JLabel labelUser;
+    private javax.swing.JProgressBar progressBar;
     private javax.swing.JButton serverBackButton;
     private javax.swing.JList serverList;
     private javax.swing.JButton serverRefreshButton;

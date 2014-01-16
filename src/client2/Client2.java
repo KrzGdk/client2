@@ -17,6 +17,7 @@ import java.io.RandomAccessFile;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
 /**
@@ -35,10 +36,12 @@ public class Client2{
     protected boolean logged = false, passiveMode = false;
     protected String command, response;
     protected JTextArea textOut = null;
-   
+    protected Thread transferThread = null;
+    protected JProgressBar progressBar;
     
-    public Client2(JTextArea textArea){
+    public Client2(JTextArea textArea, JProgressBar progress){
         textOut = textArea;
+        progressBar = progress;
     }
     
     /**
@@ -121,32 +124,26 @@ public class Client2{
      * @param path path to the file on the local disk, must contain directory separator
      * @param filename name of local file
      * @param serverPath path to save the file on server
-     * @return true on success, false on failure
      * @throws IOException
-     * @throws client2.FileTransferFailedException
      */
-    public boolean putFile(String path, String filename, String serverPath) throws IOException, FileTransferFailedException{
-        if(!initializePassiveMode()) return false;
+    public void putFile(String path, String filename, String serverPath) throws IOException{
+        if(!initializePassiveMode()) return;
         toServer.println("STOR " + serverPath + filename);
         textOut.append("STOR " + serverPath + filename + "\n");
         setResponse(fromServer.readLine());
         textOut.append(getResponse() + "\n");
         if(getResponse().startsWith("150")){ 
-            try (FileInputStream fileIn = new FileInputStream(path + File.separator + filename); 
-                    DataOutputStream dataOut = new DataOutputStream(passiveSocket.getOutputStream())) {
-                
-                int offset;
-                byte[] data = new byte[1024];
-                while( (offset = fileIn.read(data)) != -1){
-                    dataOut.write(data, 0, offset);
-                }
-            }
-            setResponse(fromServer.readLine()); // transfer complete
-            textOut.append(getResponse() + "\n");
-            if(getResponse().startsWith("226")) return true;
-            else throw new FileTransferFailedException();
+            transferThread = new PutFileThread(passiveSocket, path, filename, fromServer, textOut, progressBar);
+            transferThread.start();
         }
-        else throw new FileTransferFailedException();
+    }
+    
+    public void abortTransfer() throws IOException{
+        transferThread.interrupt();
+        System.out.println("Przerwany! czekam na odp");
+        transferThread = null;
+        setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
     }
     /**
      * Method that sends the append command to FTP server
