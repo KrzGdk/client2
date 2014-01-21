@@ -110,7 +110,9 @@
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="backButton" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="395" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="localRefreshButton" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <Group type="103" groupAlignment="0" attributes="0">
@@ -152,6 +154,7 @@
                   <Component id="backButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="serverBackButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="serverRefreshButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="localRefreshButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -389,6 +392,17 @@
         <Property name="text" type="java.lang.String" value="&gt;&gt;&gt;&gt;"/>
         <Property name="toolTipText" type="java.lang.String" value="Append file"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButtonAppeActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="localRefreshButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Refresh"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="localRefreshButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

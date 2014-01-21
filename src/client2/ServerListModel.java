@@ -27,7 +27,6 @@ public class ServerListModel implements ListModel {
         try {
             client.changeDirectory(dir);
             list = client.listToString();
-            //client.changeDirectory("/");
         } catch (IOException ex) {
             Logger.getLogger(ServerListModel.class.getName()).log(Level.SEVERE, "list error", ex);
         }
@@ -36,22 +35,27 @@ public class ServerListModel implements ListModel {
 
     @Override
     public int getSize() {
-        if(list.equals("empty")) return 1;
-        String lines[] = list.split("\\r?\\n");
-        return lines.length;
+        if(list != null){
+            if(list.equals("empty")) return 1;
+            String lines[] = list.split("\\r?\\n");
+            return lines.length;
+        }
+        else return 0;
     }
 
     @Override
     public Object getElementAt(int index) {
-        if(list.equals("empty")) return new ServerFile("..", true);
-        String lines[] = list.split("\\r?\\n");
-        String line[] = lines[index].split("\\s+");
-        String filename = line[line.length-1];
-        String isDir = line[0];
-        boolean dir = false;
-        if(isDir.equals("d")) dir = true;
-        
-        return new ServerFile(filename,dir);
+        if(list != null){
+            if(list.equals("empty")) return new ServerFile("..", true);
+            String lines[] = list.split("\\r?\\n");
+            String line[] = lines[index].split("\\s+");
+            String filename = line[line.length-1];
+            String isDir = line[0];
+            boolean dir = false;
+            if(isDir.equals("d")) dir = true;
+            return new ServerFile(filename,dir);
+        }
+        else return null;
     }
 
     @Override

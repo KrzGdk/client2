@@ -100,16 +100,19 @@ public class Client2{
     /**
      * Method that downloads a file from FTP server
      *
+     * @param path local path to save file to
      * @param filename name of the file to retrieve
-     * @return true on success, false on failure
+     * @param serverPath path on the server to download file from
      * @throws IOException
      */
-    public boolean getFile(String filename) throws IOException{
-        if(!initializePassiveMode()) return false;
-        toServer.println("RETR " + filename);
+    public void getFile(String path, String filename, String serverPath) throws IOException{
+        if(!initializePassiveMode()) return;
+        toServer.println("RETR " + serverPath + filename);
+        textOut.append("RETR " + serverPath + filename + "\n");
         setResponse(fromServer.readLine());
+        textOut.append(getResponse() + "\n");
         if(getResponse().startsWith("150")){ // file found
-            try (RandomAccessFile file = new RandomAccessFile((filename),"rw"); 
+            try (RandomAccessFile file = new RandomAccessFile(path + File.separator + filename,"rw"); 
                     DataInputStream dataIn = new DataInputStream(passiveSocket.getInputStream())) {
 
                 int offset;
@@ -119,13 +122,11 @@ public class Client2{
                 }
             }
             setResponse(fromServer.readLine()); // transfer complete
-            if(getResponse().startsWith("221")){
-                connected = false;
-                return false;
-            }
-            return getResponse().startsWith("226");
+            textOut.append(getResponse() + "\n");
         }
-        else return false;
+        else if(getResponse().startsWith("221")){
+            connected = false;
+        }
     }
     /**
      * Method that uploads a file to FTP server
@@ -145,9 +146,6 @@ public class Client2{
             transferThread = new PutFileThread(passiveSocket, path, filename, fromServer, textOut, progressBar);
             transferThread.start();
         }
-        else if(getResponse().startsWith("221")){
-            connected = false;
-        }
     }
     
     public void abortTransfer() throws IOException{
@@ -163,12 +161,11 @@ public class Client2{
      * @param path path to the file on the local disk, must contain directory separator
      * @param filename name of local file
      * @param serverPath path to save the file on server
-     * @return true on success, false on failure
      * @throws IOException
      */
-    public boolean appendFile(String path, String filename, String serverPath) throws IOException{
-        if(!initializePassiveMode()) return false;
-        toServer.println("APPE " + filename);
+    public void appendFile(String path, String filename, String serverPath) throws IOException{
+        if(!initializePassiveMode()) return;
+        toServer.println("APPE " + serverPath + filename);
         textOut.append("APPE " + serverPath + filename + "\n");
         setResponse(fromServer.readLine());
         textOut.append(getResponse() + "\n");
@@ -184,13 +181,10 @@ public class Client2{
             }
             setResponse(fromServer.readLine()); // transfer complete
             textOut.append(getResponse() + "\n");
-            if(getResponse().startsWith("221")){
-                connected = false;
-                return false;
-            }
-            return getResponse().startsWith("226");
         }
-        else return false;
+        else if(getResponse().startsWith("221")){
+            connected = false;
+        }
     }
     /**
      * Deletes a file from FTP server

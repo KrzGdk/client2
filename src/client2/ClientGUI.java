@@ -6,6 +6,7 @@ package client2;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,6 +69,7 @@ public class ClientGUI extends javax.swing.JFrame{
         abortButton = new javax.swing.JButton();
         progressBar = new javax.swing.JProgressBar();
         ButtonAppe = new javax.swing.JButton();
+        localRefreshButton = new javax.swing.JButton();
 
         jToggleButton1.setText("jToggleButton1");
 
@@ -204,6 +206,18 @@ public class ClientGUI extends javax.swing.JFrame{
 
         ButtonAppe.setText(">>>>");
         ButtonAppe.setToolTipText("Append file");
+        ButtonAppe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonAppeActionPerformed(evt);
+            }
+        });
+
+        localRefreshButton.setText("Refresh");
+        localRefreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                localRefreshButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -270,7 +284,9 @@ public class ClientGUI extends javax.swing.JFrame{
                                                     .addGap(45, 45, 45))))
                                         .addGroup(layout.createSequentialGroup()
                                             .addComponent(backButton)
-                                            .addGap(395, 395, 395)))
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(localRefreshButton)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(layout.createSequentialGroup()
                                             .addComponent(serverBackButton)
@@ -299,7 +315,8 @@ public class ClientGUI extends javax.swing.JFrame{
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(backButton)
                     .addComponent(serverBackButton)
-                    .addComponent(serverRefreshButton))
+                    .addComponent(serverRefreshButton)
+                    .addComponent(localRefreshButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(currentLocalDirLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -357,14 +374,25 @@ public class ClientGUI extends javax.swing.JFrame{
             ButtonDisconnect.setEnabled(true);
         } catch (UnknownHostException ex) {
             Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+        } catch(ConnectException ex){
+            showMessageDialog(null, "Cannot connect to server");
         } catch (IOException ex) {
             Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_ButtonConnectActionPerformed
 
     private void ButtonRetrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonRetrActionPerformed
-//        TreePath path = serverTree.getSelectionPath();
-//        System.out.println(path.toString());
+        System.out.println(currentServerDir);
+        ServerFile file = (ServerFile) serverList.getSelectedValue();
+        if(file.isDir()){
+            showMessageDialog(null, "Sending directories not supported");
+            return;
+        }
+        try {
+            client.getFile(currentLocalDir, file.toString(), currentServerDir);
+        } catch (IOException ex) {
+            Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_ButtonRetrActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -508,6 +536,24 @@ public class ClientGUI extends javax.swing.JFrame{
         }
     }//GEN-LAST:event_ButtonDeleActionPerformed
 
+    private void localRefreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_localRefreshButtonActionPerformed
+        clientList.setModel(new ClientListModel(currentLocalDir));
+    }//GEN-LAST:event_localRefreshButtonActionPerformed
+
+    private void ButtonAppeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonAppeActionPerformed
+        System.out.println(currentLocalDir);
+        String file = clientList.getSelectedValue().toString();
+        if(new File(currentLocalDir + File.separator + file).isDirectory()){
+            showMessageDialog(null, "Sending directories not supported");
+            return;
+        }
+        try {
+            client.appendFile(currentLocalDir, file, currentServerDir);
+        } catch (IOException ex) {
+            Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_ButtonAppeActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -569,6 +615,7 @@ public class ClientGUI extends javax.swing.JFrame{
     private javax.swing.JLabel labelPass;
     private javax.swing.JLabel labelServer;
     private javax.swing.JLabel labelUser;
+    private javax.swing.JButton localRefreshButton;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JButton serverBackButton;
     private javax.swing.JList serverList;
