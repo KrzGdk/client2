@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package client2;
 
 import java.io.BufferedReader;
@@ -19,8 +13,9 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 
 /**
+ * Thread which upload file to ftp server
  *
- * @author root
+ * @author Krzysztof Gądek
  */
 public class PutFileThread extends Thread {
     protected Socket passiveSocket = null;
@@ -30,6 +25,16 @@ public class PutFileThread extends Thread {
     protected JTextArea textOut;
     protected JProgressBar progress;
     
+    /**
+     * Parametrized constructor
+     *
+     * @param passSock server socket to send file to
+     * @param path path to the file on local machine
+     * @param name name of the file
+     * @param fromS buffered reader to get command from server
+     * @param textOut text area to write commands to
+     * @param prog progress bar to update
+     */
     public PutFileThread(Socket passSock, String path, String name, BufferedReader fromS, JTextArea textOut, JProgressBar prog){
         passiveSocket = passSock;
         this.path = path;

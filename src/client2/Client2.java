@@ -148,9 +148,13 @@ public class Client2{
         }
     }
     
+    /**
+     * Aborts current transfer by interrupting transfer thread
+     *
+     * @throws IOException
+     */
     public void abortTransfer() throws IOException{
         transferThread.interrupt();
-        System.out.println("Przerwany! czekam na odp");
         transferThread = null;
         setResponse(fromServer.readLine());
         textOut.append(getResponse() + "\n");
@@ -166,7 +170,7 @@ public class Client2{
     public void appendFile(String path, String filename, String serverPath) throws IOException{
         if(!initializePassiveMode()) return;
         toServer.println("APPE " + serverPath + filename);
-        textOut.append("APPE " + serverPath + filename + "\n");
+        textOut.append("APPE " + serverPath + filename + "\n");  //todo append from any file
         setResponse(fromServer.readLine());
         textOut.append(getResponse() + "\n");
         if(getResponse().startsWith("150")){ 

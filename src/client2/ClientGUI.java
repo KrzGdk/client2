@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package client2;
 
 import java.io.File;
@@ -12,15 +8,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.showMessageDialog;
+import javax.swing.text.DefaultCaret;
 
 /**
+ * Graphic interface for ftp client
  *
- * @author Krzysiek
+ * @author Krzysztof Gądek
  */
 public class ClientGUI extends javax.swing.JFrame{
     private String currentLocalDir;
     private String currentServerDir;
     private final Client2 client;
+    
     /**
      * Creates new form ClientGUI
      */
@@ -118,6 +117,11 @@ public class ClientGUI extends javax.swing.JFrame{
         });
 
         ButtonRmd.setText("Delete Directory");
+        ButtonRmd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButtonRmdActionPerformed(evt);
+            }
+        });
 
         ButtonMkd.setText("Create Directory");
         ButtonMkd.addActionListener(new java.awt.event.ActionListener() {
@@ -162,6 +166,8 @@ public class ClientGUI extends javax.swing.JFrame{
         commandsArea.setEditable(false);
         commandsArea.setColumns(20);
         commandsArea.setRows(5);
+        DefaultCaret caret = (DefaultCaret)commandsArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         jScrollPane1.setViewportView(commandsArea);
 
         serverList.setCellRenderer(new ServerFileRenderer(true));
@@ -553,6 +559,19 @@ public class ClientGUI extends javax.swing.JFrame{
             Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_ButtonAppeActionPerformed
+
+    private void ButtonRmdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonRmdActionPerformed
+        String filename = serverList.getSelectedValue().toString();
+        ServerFile file = (ServerFile) serverList.getSelectedValue();
+        if(!file.isDir()){
+            showMessageDialog(null, "Use Delete file");
+        }
+        else try {
+            client.removeDirectory(currentServerDir + filename);
+        } catch (IOException ex) {
+            Logger.getLogger(ClientGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_ButtonRmdActionPerformed
 
     /**
      * @param args the command line arguments
